@@ -68,9 +68,9 @@
         android:fontFamily="@font/archivo_black"
         android:textAlignment="textEnd"
         android:textSize="18dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/no7"
         app:layout_constraintEnd_toStartOf="@+id/no7"
         app:layout_constraintStart_toStartOf="@+id/newNumber"
-        tools:layout_editor_absoluteY="127dp"
         tools:text="+" />
 
     <EditText

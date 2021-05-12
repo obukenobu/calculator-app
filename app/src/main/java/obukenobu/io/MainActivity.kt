@@ -113,7 +113,8 @@ class MainActivity : AppCompatActivity() {
             outState.putBoolean(STATE_OPERAND_STORED, true)
             Log.d("onSaveInstance", "saved oprand")
         }
-        outState.putString(STATE_DEPENDING_OPERATION, pendingOperation)
+            outState.putString(STATE_DEPENDING_OPERATION, pendingOperation)
+
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
