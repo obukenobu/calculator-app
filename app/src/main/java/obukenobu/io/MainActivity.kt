@@ -57,6 +57,28 @@ class MainActivity : AppCompatActivity() {
         equals.setOnClickListener(opListener)
         minus.setOnClickListener(opListener)
         multiply.setOnClickListener(opListener)
+
+        clear.setOnClickListener{view ->
+            result.text.clear()
+            newNumber.text.clear()
+            operation.text=" "
+        }
+
+        negationButton.setOnClickListener { view ->
+            val value = newNumber.text.toString()
+            if (value.isEmpty()) {
+                newNumber.setText("-")
+            } else {
+                try {
+                    var doubleValue = value.toDouble()
+                    doubleValue *= -1
+                    newNumber.setText(doubleValue.toString())
+                } catch (e: NumberFormatException) {
+                    Log.d("onNegation", "exception: $e")
+                    newNumber.text.clear()
+                }
+            }
+        }
     }
 
     private fun performOperation(value: Double, op: String) {
@@ -96,10 +118,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        if (savedInstanceState.getBoolean(STATE_OPERAND_STORED)) {
-            operand1 = savedInstanceState.getDouble(STATE_OPERAND1)
+        operand1 = if (savedInstanceState.getBoolean(STATE_OPERAND_STORED)) {
+            savedInstanceState.getDouble(STATE_OPERAND1)
         } else {
-            operand1 = null
+            null
         }
         pendingOperation = savedInstanceState.getString(STATE_DEPENDING_OPERATION).toString()
         operation.text = pendingOperation
