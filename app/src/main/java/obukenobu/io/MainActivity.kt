@@ -2,6 +2,7 @@ package obukenobu.io
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -13,11 +14,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var result: EditText
     private lateinit var newNumber: EditText
     private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
-
     private var operand1: Double? = null
-    private var operand2: Double = 0.0
     private var pendingOperation = "="
-
+    private val STATE_DEPENDING_OPERATION = "PendingOperation"
+    private val STATE_OPERAND1 = "Operand1"
+    private val STATE_OPERAND_STORED = "OperandStored"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -67,9 +68,8 @@ class MainActivity : AppCompatActivity() {
             try {
                 val value = newNumber.text.toString().toDouble()
                 performOperation(value, op)
-            }catch (e: NumberFormatException)
-            {
-                Log.d("onPerformException","exception: $e")
+            } catch (e: NumberFormatException) {
+                Log.d("onPerformException", "exception: $e")
                 newNumber.text.clear()
             }
             pendingOperation = op
@@ -88,25 +88,47 @@ class MainActivity : AppCompatActivity() {
         if (operand1 == null) {
             operand1 = value
         } else {
-            operand2 = value
+
 
             if (pendingOperation == "=") {
                 pendingOperation = op
             }
             when (pendingOperation) {
-                "=" -> operand1 = operand2
-                "/" -> operand1 = if (operand2 == 0.0) {
+                "=" -> operand1 = value
+                "/" -> operand1 = if (value == 0.0) {
                     Double.NaN
                 } else {
-                    operand1!! / operand2
+                    operand1!! / value
                 }
-                "*" -> operand1 = operand1!! * operand2
-                "-" -> operand1 = operand1!! - operand2
-                "+" -> operand1 = operand1!! + operand2
+                "*" -> operand1 = operand1!! * value
+                "-" -> operand1 = operand1!! - value
+                "+" -> operand1 = operand1!! + value
             }
         }
         result.setText(operand1.toString())
         newNumber.text.clear()
     }
 
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        if (operand1 != null) {
+            outState.putDouble(STATE_OPERAND1, operand1!!)
+            outState.putBoolean(STATE_OPERAND_STORED, true)
+            Log.d("onSaveInstance", "saved oprand")
+        }
+        outState.putString(STATE_DEPENDING_OPERATION, pendingOperation)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        if (savedInstanceState.getBoolean(STATE_OPERAND_STORED)) {
+            operand1 = savedInstanceState.getDouble(STATE_OPERAND1)
+        } else{
+            operand1 = null
+        }
+        pendingOperation = savedInstanceState.getString(STATE_DEPENDING_OPERATION).toString()
+        displayOperation.text = pendingOperation
+
+
+    }
 }
