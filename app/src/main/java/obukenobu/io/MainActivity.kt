@@ -6,14 +6,12 @@ import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import java.lang.NumberFormatException
+import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var result: EditText
-    private lateinit var newNumber: EditText
-    private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
+
     private var operand1: Double? = null
     private var pendingOperation = "="
     private val STATE_DEPENDING_OPERATION = "PendingOperation"
@@ -22,45 +20,22 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        result = findViewById(R.id.result)
-        newNumber = findViewById(R.id.newNumber)
-
-        val button0: Button = findViewById(R.id.no0)
-        val button1: Button = findViewById(R.id.no1)
-        val button2: Button = findViewById(R.id.no2)
-        val button3: Button = findViewById(R.id.no3)
-        val button4: Button = findViewById(R.id.no4)
-        val button5: Button = findViewById(R.id.no5)
-        val button6: Button = findViewById(R.id.no6)
-        val button7: Button = findViewById(R.id.no7)
-        val button8: Button = findViewById(R.id.no8)
-        val button9: Button = findViewById(R.id.no9)
-        val buttonDot: Button = findViewById(R.id.buttonDot)
-
-        val btnEquals: Button = findViewById(R.id.equals)
-        val btnAdd: Button = findViewById(R.id.add)
-        val btnDivide: Button = findViewById(R.id.divide)
-        val btnMultiply: Button = findViewById(R.id.multiply)
-        val btnMinus: Button = findViewById(R.id.minus)
-
         val listener = View.OnClickListener { v ->
             val b = v as Button
             newNumber.append(b.text)
             Log.d("onClick", "Clicked button ${b.text}")
         }
 
-
-        button0.setOnClickListener(listener)
-        button1.setOnClickListener(listener)
-        button2.setOnClickListener(listener)
-        button3.setOnClickListener(listener)
-        button4.setOnClickListener(listener)
-        button5.setOnClickListener(listener)
-        button6.setOnClickListener(listener)
-        button7.setOnClickListener(listener)
-        button8.setOnClickListener(listener)
-        button9.setOnClickListener(listener)
+        no0.setOnClickListener(listener)
+        no1.setOnClickListener(listener)
+        no2.setOnClickListener(listener)
+        no3.setOnClickListener(listener)
+        no4.setOnClickListener(listener)
+        no5.setOnClickListener(listener)
+        no6.setOnClickListener(listener)
+        no7.setOnClickListener(listener)
+        no8.setOnClickListener(listener)
+        no9.setOnClickListener(listener)
         buttonDot.setOnClickListener(listener)
 
         val opListener = View.OnClickListener { v ->
@@ -73,15 +48,15 @@ class MainActivity : AppCompatActivity() {
                 newNumber.text.clear()
             }
             pendingOperation = op
-            displayOperation.text = pendingOperation
+            operation.text = pendingOperation
 
         }
 
-        btnAdd.setOnClickListener(opListener)
-        btnDivide.setOnClickListener(opListener)
-        btnEquals.setOnClickListener(opListener)
-        btnMinus.setOnClickListener(opListener)
-        btnMultiply.setOnClickListener(opListener)
+        add.setOnClickListener(opListener)
+        divide.setOnClickListener(opListener)
+        equals.setOnClickListener(opListener)
+        minus.setOnClickListener(opListener)
+        multiply.setOnClickListener(opListener)
     }
 
     private fun performOperation(value: Double, op: String) {
@@ -123,11 +98,11 @@ class MainActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         if (savedInstanceState.getBoolean(STATE_OPERAND_STORED)) {
             operand1 = savedInstanceState.getDouble(STATE_OPERAND1)
-        } else{
+        } else {
             operand1 = null
         }
         pendingOperation = savedInstanceState.getString(STATE_DEPENDING_OPERATION).toString()
-        displayOperation.text = pendingOperation
+        operation.text = pendingOperation
 
 
     }
